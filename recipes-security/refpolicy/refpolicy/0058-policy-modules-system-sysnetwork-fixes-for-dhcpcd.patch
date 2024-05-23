@@ -1,0 +1,84 @@
+From 716dfcd77736f14817407dafe2ccbf658f480579 Mon Sep 17 00:00:00 2001
+From: Yi Zhao <yi.zhao@windriver.com>
+Date: Tue, 28 May 2024 13:17:42 +0800
+Subject: [PATCH] policy/modules/system/sysnetwork: fixes for dhcpcd
+
+Allow dhcpcd to create netlink socket and read files under /run/udev/.
+
+Fixes:
+avc: denied { search } for pid=393 comm="dhcpcd" name="udev" dev="tmpfs"
+ino=49 scontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tcontext=system_u:object_r:udev_runtime_t:s0 tclass=dir permissive=1
+
+avc: denied { create } for pid=393 comm="dhcpcd"
+scontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tcontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tclass=netlink_kobject_uevent_socket permissive=1
+
+avc: denied { getopt } for pid=393 comm="dhcpcd"
+scontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tcontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tclass=netlink_kobject_uevent_socket permissive=1
+
+avc: denied { setopt } for pid=393 comm="dhcpcd"
+scontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tcontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tclass=netlink_kobject_uevent_socket permissive=1
+
+avc: denied { bind } for  pid=393 comm="dhcpcd"
+scontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tcontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tclass=netlink_kobject_uevent_socket permissive=1
+
+avc: denied { getattr } for pid=393 comm="dhcpcd"
+scontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tcontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tclass=netlink_kobject_uevent_socket permissive=1
+
+avc: denied { read } for  pid=393 comm="dhcpcd" name="n1" dev="tmpfs"
+ino=222 scontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tcontext=system_u:object_r:udev_runtime_t:s0 tclass=file permissive=1
+
+avc: denied { open } for pid=393 comm="dhcpcd" path="/run/udev/data/n1"
+dev="tmpfs" ino=222 scontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tcontext=system_u:object_r:udev_runtime_t:s0 tclass=file permissive=1
+
+avc: denied { getattr } for pid=393 comm="dhcpcd"
+path="/run/udev/data/n1" dev="tmpfs" ino=222
+scontext=system_u:system_r:dhcpc_t:s0-s15:c0.c1023
+tcontext=system_u:object_r:udev_runtime_t:s0 tclass=file permissive=1
+
+Upstream-Status: Inappropriate [embedded specific]
+
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+---
+ policy/modules/system/sysnetwork.te | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/policy/modules/system/sysnetwork.te b/policy/modules/system/sysnetwork.te
+index 9ef1300ef..e7edc1299 100644
+--- a/policy/modules/system/sysnetwork.te
++++ b/policy/modules/system/sysnetwork.te
+@@ -76,6 +76,7 @@ allow dhcpc_t self:netlink_generic_socket create_socket_perms;
+ allow dhcpc_t self:netlink_route_socket create_netlink_socket_perms;
+ allow dhcpc_t self:rawip_socket create_socket_perms;
+ allow dhcpc_t self:unix_dgram_socket { create_socket_perms sendto };
++allow dhcpc_t self:netlink_kobject_uevent_socket create_socket_perms;
+ 
+ allow dhcpc_t dhcp_etc_t:dir list_dir_perms;
+ read_lnk_files_pattern(dhcpc_t, dhcp_etc_t, dhcp_etc_t)
+@@ -281,6 +282,11 @@ optional_policy(`
+ 	xen_dontaudit_rw_unix_stream_sockets(dhcpc_t)
+ ')
+ 
++optional_policy(`
++	udev_search_runtime(dhcpc_t)
++	udev_read_runtime_files(dhcpc_t)
++')
++
+ ########################################
+ #
+ # Ifconfig local policy
+-- 
+2.25.1
+
