@@ -73,6 +73,7 @@ SRC_URI += " \
         file://0055-policy-modules-system-systemd-make-_systemd_t-MLS-tr.patch \
         file://0056-policy-modules-system-logging-make-syslogd_runtime_t.patch \
         file://0057-policy-modules-system-logging-grant-getpcap-capabili.patch \
+        file://0060-policy-modules-system-userdomain-allow-administrativ.patch \
         "
 
 S = "${WORKDIR}/refpolicy"
