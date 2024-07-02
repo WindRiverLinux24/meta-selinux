@@ -1,7 +1,9 @@
-From 7ffed73cc4fc1b0d8a079aa1efabec61e9c4f9d3 Mon Sep 17 00:00:00 2001
+From eb70d2625f483a416488434b36a3defe30ad017c Mon Sep 17 00:00:00 2001
 From: Yi Zhao <yi.zhao@windriver.com>
 Date: Tue, 28 May 2024 15:06:06 +0800
-Subject: [PATCH] policy/modules/system/selinuxutil: allow newrole to search
+Subject: [PATCH 2/2] policy/modules/system/selinuxutil: allow newrole to
+ search
+
  faillock dir
 
 Allow newrole to search the /run/faillock directory, otherwise the
@@ -21,10 +23,10 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
  2 files changed, 19 insertions(+)
 
 diff --git a/policy/modules/system/authlogin.if b/policy/modules/system/authlogin.if
-index 6b9d957d3..831c5275b 100644
+index 62e0e0585..a68a8f2b2 100644
 --- a/policy/modules/system/authlogin.if
 +++ b/policy/modules/system/authlogin.if
-@@ -935,6 +935,24 @@ interface(`auth_setattr_faillog_files',`
+@@ -956,6 +956,24 @@ interface(`auth_setattr_faillog_files',`
  	setattr_files_pattern($1, faillog_t, faillog_t)
  ')
  
@@ -50,17 +52,17 @@ index 6b9d957d3..831c5275b 100644
  ## <summary>
  ##	Read the last logins log.
 diff --git a/policy/modules/system/selinuxutil.te b/policy/modules/system/selinuxutil.te
-index ae294a923..840685503 100644
+index 7770132d8..74b26bbd7 100644
 --- a/policy/modules/system/selinuxutil.te
 +++ b/policy/modules/system/selinuxutil.te
-@@ -296,6 +296,7 @@ auth_run_chk_passwd(newrole_t, newrole_roles)
- auth_run_upd_passwd(newrole_t, newrole_roles)
+@@ -297,6 +297,7 @@ auth_run_upd_passwd(newrole_t, newrole_roles)
  auth_rw_faillog(newrole_t)
+ auth_search_faillog(newrole_t)
  auth_read_shadow(newrole_t)
 +auth_search_faillog_dirs(newrole_t)
  
  # Write to utmp.
  init_rw_utmp(newrole_t)
 -- 
-2.25.1
+2.42.0
 

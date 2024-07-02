@@ -1,7 +1,7 @@
-From 716dfcd77736f14817407dafe2ccbf658f480579 Mon Sep 17 00:00:00 2001
+From 5cf4ecaa0bc30439f9f086e6e49f25ed82a24fce Mon Sep 17 00:00:00 2001
 From: Yi Zhao <yi.zhao@windriver.com>
 Date: Tue, 28 May 2024 13:17:42 +0800
-Subject: [PATCH] policy/modules/system/sysnetwork: fixes for dhcpcd
+Subject: [PATCH 1/2] policy/modules/system/sysnetwork: fixes for dhcpcd
 
 Allow dhcpcd to create netlink socket and read files under /run/udev/.
 
@@ -56,10 +56,10 @@ Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
  1 file changed, 6 insertions(+)
 
 diff --git a/policy/modules/system/sysnetwork.te b/policy/modules/system/sysnetwork.te
-index 9ef1300ef..e7edc1299 100644
+index b5607a2da..803c486f7 100644
 --- a/policy/modules/system/sysnetwork.te
 +++ b/policy/modules/system/sysnetwork.te
-@@ -76,6 +76,7 @@ allow dhcpc_t self:netlink_generic_socket create_socket_perms;
+@@ -77,6 +77,7 @@ allow dhcpc_t self:netlink_kobject_uevent_socket create_socket_perms;
  allow dhcpc_t self:netlink_route_socket create_netlink_socket_perms;
  allow dhcpc_t self:rawip_socket create_socket_perms;
  allow dhcpc_t self:unix_dgram_socket { create_socket_perms sendto };
@@ -67,8 +67,8 @@ index 9ef1300ef..e7edc1299 100644
  
  allow dhcpc_t dhcp_etc_t:dir list_dir_perms;
  read_lnk_files_pattern(dhcpc_t, dhcp_etc_t, dhcp_etc_t)
-@@ -281,6 +282,11 @@ optional_policy(`
- 	xen_dontaudit_rw_unix_stream_sockets(dhcpc_t)
+@@ -285,6 +286,11 @@ optional_policy(`
+ 	xen_append_log(dhcpc_t)
  ')
  
 +optional_policy(`
@@ -80,5 +80,5 @@ index 9ef1300ef..e7edc1299 100644
  #
  # Ifconfig local policy
 -- 
-2.25.1
+2.42.0
 
